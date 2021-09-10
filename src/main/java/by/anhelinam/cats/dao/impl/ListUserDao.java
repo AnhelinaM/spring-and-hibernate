@@ -9,24 +9,28 @@ import java.util.List;
 public enum ListUserDao implements UserDao {
     INSTANCE;
 
-    private List<User> userList = new ArrayList<>();
+    private final List<User> userList = new ArrayList<>();
     private int currentId = 0;
 
+    @Override
     public List<User> getAll() {
         return userList;
     }
 
+    @Override
     public User getOne(int id) {
         return userList.stream().filter(user -> user.getId() == id).findAny().orElse(null);
     }
 
-    public User signUp(String name, int age, String gender) { //вообще не помню, какой там метод
+    @Override
+    public User signUp(String name, int age, String gender) {
         User user = new User(name, age, gender);
         user.setId(++currentId);
         userList.add(user);
         return user;
     }
 
+    @Override
     public void delete(int id) {
         userList.removeIf(user -> user.getId() == id);
     }

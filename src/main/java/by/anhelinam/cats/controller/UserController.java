@@ -11,7 +11,6 @@ public enum UserController {
     INSTANCE();
 
     private final UserService userService;
-    public Scanner scanner = new Scanner(System.in);
 
     UserController() {
         this.userService = ApplicationConfig.getUserServise();
@@ -22,6 +21,7 @@ public enum UserController {
     }
 
     private void run() throws RequestException, ValidationException {
+        Scanner scanner = new Scanner(System.in);
         while (true) {
             String request = scanner.nextLine();
             switch (request) {
