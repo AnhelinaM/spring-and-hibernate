@@ -19,12 +19,12 @@ public enum StudentController {
         this.studentService = ApplicationConfig.getStudentService();
     }
 
-    public static void main(String[] args) throws RequestException, ValidationException, ConnectionPoolException, SQLException {
+    public static void main(String[] args) throws RequestException, ValidationException, ConnectionPoolException, SQLException, InterruptedException {
         ApplicationConfig.initializeProperties();
         StudentController.INSTANCE.run();
     }
 
-    private void run() throws RequestException, ValidationException, SQLException {
+    private void run() throws RequestException, ValidationException, SQLException, InterruptedException {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String request = scanner.nextLine();

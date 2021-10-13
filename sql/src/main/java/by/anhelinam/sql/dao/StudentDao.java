@@ -7,13 +7,13 @@ import java.sql.SQLException;
 import java.util.Set;
 
 public interface StudentDao {
-    Set<Student> getAll() throws SQLException;
+    Set<Student> getAll() throws SQLException, InterruptedException;
 
-    Student getOne(long id) throws SQLException;
+    Student getOne(long id) throws SQLException, InterruptedException;
 
-    Student updateOne(long id, String name, Date birthday, int grade) throws SQLException;
+    Student updateOne(long id, String name, Date birthday, int grade) throws SQLException, InterruptedException;
 
-    Student addOne(String name, Date birthday, int grade) throws SQLException;
+    Student addOne(String name, Date birthday, int grade) throws SQLException, InterruptedException;
 
-    void delete(long id) throws SQLException;
+    void delete(long id) throws SQLException, InterruptedException;
 }
