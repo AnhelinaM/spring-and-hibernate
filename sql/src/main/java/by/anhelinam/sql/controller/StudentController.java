@@ -19,9 +19,13 @@ public enum StudentController {
         this.studentService = ApplicationConfig.getStudentService();
     }
 
-    public static void main(String[] args) throws RequestException, ValidationException, ConnectionPoolException, SQLException, InterruptedException {
-        ApplicationConfig.initializeProperties();
-        StudentController.INSTANCE.run();
+    public static void main(String[] args) {
+        try {
+            ApplicationConfig.initializeProperties();
+            StudentController.INSTANCE.run();
+        } catch (RequestException | ValidationException | ConnectionPoolException | SQLException | InterruptedException ignored) {
+            System.err.println("There's something happening here. But what it is ain't exactly clear");
+        }
     }
 
     private void run() throws RequestException, ValidationException, SQLException, InterruptedException {
