@@ -25,7 +25,7 @@ public enum StudentController {
         StudentController.INSTANCE.run();
     }
 
-    private void run() throws RequestException, ValidationException, SQLException, InterruptedException {
+    private void run() throws RequestException, ValidationException, SQLException, InterruptedException, ConnectionPoolException {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String request = scanner.nextLine();
