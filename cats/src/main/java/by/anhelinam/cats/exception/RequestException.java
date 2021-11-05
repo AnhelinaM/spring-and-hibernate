@@ -1,4 +1,4 @@
-package by.anhelinam.sql.exception;
+package by.anhelinam.cats.exception;
 
 public class RequestException extends Exception {
     public RequestException() {
