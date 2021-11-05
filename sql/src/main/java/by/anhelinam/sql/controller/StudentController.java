@@ -21,11 +21,11 @@ public enum StudentController {
     }
 
     public static void main(String[] args) throws RequestException, ValidationException, ConnectionPoolException, SQLException, InterruptedException {
-        ApplicationConfig.initializeProperties();
-        StudentController.INSTANCE.run();
+        ApplicationConfig.run();
     }
 
-    private void run() throws RequestException, ValidationException, SQLException, InterruptedException, ConnectionPoolException {
+//    public можно??
+    public void run() throws RequestException, ValidationException, SQLException, InterruptedException, ConnectionPoolException {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String request = scanner.nextLine();
@@ -55,7 +55,7 @@ public enum StudentController {
                     studentService.delete(id);
                     break;
                 case "exit":
-                    ConnectionPool.INSTANCE.closePool();
+                    ApplicationConfig.getConnectionPool().closePool();
                     return;
                 default:
                     throw new RequestException("There is no such request");
