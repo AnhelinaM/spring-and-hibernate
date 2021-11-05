@@ -1,7 +1,5 @@
 package by.anhelinam.sql.pool;
 
-import by.anhelinam.sql.config.ApplicationConfig;
-
 import java.sql.*;
 import java.util.Map;
 import java.util.Properties;
@@ -57,7 +55,7 @@ public class ProxyConnection implements Connection {
     @Override
     public void close() {
         try {
-            ApplicationConfig.getConnectionPool().returnConnection(this);
+            ConnectionPool.INSTANCE.returnConnection(this);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -288,7 +286,7 @@ public class ProxyConnection implements Connection {
         return connection.isWrapperFor(iface);
     }
 
-    public void closeInPool() throws SQLException { //?/????
+    void closeInPool() throws SQLException {
         connection.close();
     }
 }
