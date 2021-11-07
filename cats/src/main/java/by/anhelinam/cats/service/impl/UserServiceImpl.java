@@ -16,12 +16,10 @@ public enum UserServiceImpl implements UserService {
         this.userDao = ApplicationConfig.getUserDao();
     }
 
-    @Override
     public List<User> getAll() {
         return userDao.getAll();
     }
 
-    @Override
     public User getOne(int id) throws ValidationException {
         if (id > 0) {
             return userDao.getOne(id);
@@ -30,7 +28,6 @@ public enum UserServiceImpl implements UserService {
         }
     }
 
-    @Override
     public User signUp(String name, int age, String gender) throws ValidationException {
         if (name == null || age <= 0 || gender == null) {
             throw new ValidationException("Invalid data");
@@ -38,7 +35,6 @@ public enum UserServiceImpl implements UserService {
         return userDao.signUp(name, age, gender);
     }
 
-    @Override
     public void delete(int id) throws ValidationException {
         if (id > 0) {
             userDao.delete(id);

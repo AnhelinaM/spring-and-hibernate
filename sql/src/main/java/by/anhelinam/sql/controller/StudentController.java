@@ -4,6 +4,7 @@ import by.anhelinam.sql.config.ApplicationConfig;
 import by.anhelinam.sql.exception.ConnectionPoolException;
 import by.anhelinam.sql.exception.RequestException;
 import by.anhelinam.sql.exception.ValidationException;
+import by.anhelinam.sql.pool.ConnectionPool;
 import by.anhelinam.sql.service.StudentService;
 
 import java.sql.Date;
@@ -19,12 +20,12 @@ public enum StudentController {
         this.studentService = ApplicationConfig.getStudentService();
     }
 
-    public static void main(String[] args) throws RequestException, ValidationException, ConnectionPoolException, SQLException {
-        ApplicationConfig.initializeProperties();
-        StudentController.INSTANCE.run();
+    public static void main(String[] args) throws RequestException, ValidationException, ConnectionPoolException, SQLException, InterruptedException {
+        ApplicationConfig.run();
     }
 
-    private void run() throws RequestException, ValidationException, SQLException {
+//    public можно??
+    public void run() throws RequestException, ValidationException, SQLException, InterruptedException, ConnectionPoolException {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String request = scanner.nextLine();
@@ -54,6 +55,7 @@ public enum StudentController {
                     studentService.delete(id);
                     break;
                 case "exit":
+                    ApplicationConfig.getConnectionPool().closePool();
                     return;
                 default:
                     throw new RequestException("There is no such request");

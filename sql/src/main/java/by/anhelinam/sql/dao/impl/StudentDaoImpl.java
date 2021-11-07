@@ -5,16 +5,18 @@ import by.anhelinam.sql.dao.StudentDao;
 import by.anhelinam.sql.entity.Payment;
 import by.anhelinam.sql.entity.PaymentType;
 import by.anhelinam.sql.entity.Student;
+import by.anhelinam.sql.exception.ConnectionPoolException;
+import by.anhelinam.sql.pool.ProxyConnection;
 
 import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;
 
-public enum SetStudentDao implements StudentDao {
+public enum StudentDaoImpl implements StudentDao {
     INSTANCE;
 
     @Override
-    public Set<Student> getAll() throws SQLException {
+    public Set<Student> getAll() throws SQLException, InterruptedException, ConnectionPoolException {
         Set<Student> studentSet = new HashSet<>();
         String queryString = "select s.id as s_id, p.id as p_id, p.amount, p.date, pt.id as pt_id, pt.name as pt_name, " +
                 "s.name as s_name, s.birthday, grade " +
@@ -23,7 +25,7 @@ public enum SetStudentDao implements StudentDao {
                 "on p.student_id = s.id " +
                 "left join payment_type pt " +
                 "on p.type_id = pt.id order by s.id";
-        try (Connection connection = DriverManager.getConnection(ApplicationConfig.getDbURL(), ApplicationConfig.getDbProperties());
+        try (ProxyConnection connection = ApplicationConfig.getConnectionPool().getConnection();
              Statement statement = connection.createStatement()) {
 
             ResultSet resultSet = statement.executeQuery(queryString);
@@ -54,12 +56,12 @@ public enum SetStudentDao implements StudentDao {
     }
 
     @Override
-    public Student getOne(long id) throws SQLException {
+    public Student getOne(long id) throws SQLException, InterruptedException, ConnectionPoolException {
         String queryString = "select p.id as p_id, p.amount, p.date, pt.id as pt_id, pt.name as pt_name, " +
                 "s.name as s_name, s.birthday, grade from student s left join payment p on p.student_id = s.id " +
                 "left join payment_type pt on p.type_id = pt.id where s.id = ?";
 
-        try (Connection connection = DriverManager.getConnection(ApplicationConfig.getDbURL(), ApplicationConfig.getDbProperties());
+        try (ProxyConnection connection = ApplicationConfig.getConnectionPool().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
 
             preparedStatement.setLong(1, id); // номер вопросика начиная с 1
@@ -91,11 +93,11 @@ public enum SetStudentDao implements StudentDao {
     }
 
     @Override
-    public Student updateOne(long id, String name, Date birthday, int grade) throws SQLException {
+    public Student updateOne(long id, String name, Date birthday, int grade) throws SQLException, InterruptedException, ConnectionPoolException {
         String queryString = "update student " +
                 "set name = ?, birthday = ?, grade = ? where id = ?";
 
-        try (Connection connection = DriverManager.getConnection(ApplicationConfig.getDbURL(), ApplicationConfig.getDbProperties());
+        try (ProxyConnection connection = ApplicationConfig.getConnectionPool().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
 
             preparedStatement.setString(1, name); // номер вопросика начиная с 1
@@ -111,11 +113,11 @@ public enum SetStudentDao implements StudentDao {
     }
 
     @Override
-    public Student addOne(String name, Date birthday, int grade) throws SQLException {
+    public Student addOne(String name, Date birthday, int grade) throws SQLException, InterruptedException, ConnectionPoolException {
         String queryString = "insert into student(name, birthday, grade) " +
                 "values (?, ?, ?)";
 
-        try (Connection connection = DriverManager.getConnection(ApplicationConfig.getDbURL(), ApplicationConfig.getDbProperties());
+        try (ProxyConnection connection = ApplicationConfig.getConnectionPool().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(queryString, Statement.RETURN_GENERATED_KEYS)) {
 
             preparedStatement.setString(1, name); // номер вопросика начиная с 1
@@ -138,10 +140,10 @@ public enum SetStudentDao implements StudentDao {
     }
 
     @Override
-    public void delete(long id) throws SQLException {
+    public void delete(long id) throws SQLException, InterruptedException, ConnectionPoolException {
         String queryString = "delete from student s where s.id = ?";
 
-        try (Connection connection = DriverManager.getConnection(ApplicationConfig.getDbURL(), ApplicationConfig.getDbProperties());
+        try (ProxyConnection connection = ApplicationConfig.getConnectionPool().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
 
             preparedStatement.setLong(1, id);

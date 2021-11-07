@@ -3,6 +3,7 @@ package by.anhelinam.sql.service.impl;
 import by.anhelinam.sql.config.ApplicationConfig;
 import by.anhelinam.sql.dao.StudentDao;
 import by.anhelinam.sql.entity.Student;
+import by.anhelinam.sql.exception.ConnectionPoolException;
 import by.anhelinam.sql.exception.ValidationException;
 import by.anhelinam.sql.service.StudentService;
 
@@ -20,12 +21,12 @@ public enum StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Set<Student> getAll() throws SQLException {
+    public Set<Student> getAll() throws SQLException, InterruptedException, ConnectionPoolException {
         return studentDao.getAll();
     }
 
     @Override
-    public Student getOne(long id) throws ValidationException, SQLException {
+    public Student getOne(long id) throws ValidationException, SQLException, InterruptedException, ConnectionPoolException {
         if (id <= 0) {
             throw new ValidationException();
         }
@@ -33,7 +34,7 @@ public enum StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Student updateOne(long id, String name, Date birthday, int grade) throws ValidationException, SQLException {
+    public Student updateOne(long id, String name, Date birthday, int grade) throws ValidationException, SQLException, InterruptedException, ConnectionPoolException {
         if (id <= 0) {
             throw new ValidationException();
         }
@@ -41,7 +42,7 @@ public enum StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Student addOne(String name, Date birthday, int grade) throws ValidationException, SQLException {
+    public Student addOne(String name, Date birthday, int grade) throws ValidationException, SQLException, InterruptedException, ConnectionPoolException {
         if (name == null || birthday == null) {
             throw new ValidationException();
         }
@@ -49,7 +50,7 @@ public enum StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public void delete(long id) throws ValidationException, SQLException {
+    public void delete(long id) throws ValidationException, SQLException, InterruptedException, ConnectionPoolException {
         if (id <= 0) {
             throw new ValidationException();
         }
