@@ -1,19 +1,22 @@
 package by.anhelinam.sql.dao.impl;
 
-import by.anhelinam.sql.config.ApplicationConfig;
 import by.anhelinam.sql.dao.StudentDao;
 import by.anhelinam.sql.entity.Payment;
 import by.anhelinam.sql.entity.PaymentType;
 import by.anhelinam.sql.entity.Student;
 import by.anhelinam.sql.exception.ConnectionPoolException;
-import by.anhelinam.sql.pool.ProxyConnection;
+import by.anhelinam.sql.pool.ConnectionPool;
 
 import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;
 
-public enum StudentDaoImpl implements StudentDao {
-    INSTANCE;
+public class StudentDaoImpl implements StudentDao {
+    private final ConnectionPool connectionPool;
+
+    public StudentDaoImpl(ConnectionPool connectionPool) {
+        this.connectionPool = connectionPool;
+    }
 
     @Override
     public Set<Student> getAll() throws SQLException, InterruptedException, ConnectionPoolException {
@@ -25,7 +28,7 @@ public enum StudentDaoImpl implements StudentDao {
                 "on p.student_id = s.id " +
                 "left join payment_type pt " +
                 "on p.type_id = pt.id order by s.id";
-        try (ProxyConnection connection = ApplicationConfig.getConnectionPool().getConnection();
+        try (Connection connection = connectionPool.getConnection();
              Statement statement = connection.createStatement()) {
 
             ResultSet resultSet = statement.executeQuery(queryString);
@@ -61,7 +64,7 @@ public enum StudentDaoImpl implements StudentDao {
                 "s.name as s_name, s.birthday, grade from student s left join payment p on p.student_id = s.id " +
                 "left join payment_type pt on p.type_id = pt.id where s.id = ?";
 
-        try (ProxyConnection connection = ApplicationConfig.getConnectionPool().getConnection();
+        try (Connection connection = connectionPool.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
 
             preparedStatement.setLong(1, id); // номер вопросика начиная с 1
@@ -97,7 +100,7 @@ public enum StudentDaoImpl implements StudentDao {
         String queryString = "update student " +
                 "set name = ?, birthday = ?, grade = ? where id = ?";
 
-        try (ProxyConnection connection = ApplicationConfig.getConnectionPool().getConnection();
+        try (Connection connection = connectionPool.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
 
             preparedStatement.setString(1, name); // номер вопросика начиная с 1
@@ -117,7 +120,7 @@ public enum StudentDaoImpl implements StudentDao {
         String queryString = "insert into student(name, birthday, grade) " +
                 "values (?, ?, ?)";
 
-        try (ProxyConnection connection = ApplicationConfig.getConnectionPool().getConnection();
+        try (Connection connection = connectionPool.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(queryString, Statement.RETURN_GENERATED_KEYS)) {
 
             preparedStatement.setString(1, name); // номер вопросика начиная с 1
@@ -143,7 +146,7 @@ public enum StudentDaoImpl implements StudentDao {
     public void delete(long id) throws SQLException, InterruptedException, ConnectionPoolException {
         String queryString = "delete from student s where s.id = ?";
 
-        try (ProxyConnection connection = ApplicationConfig.getConnectionPool().getConnection();
+        try (Connection connection = connectionPool.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
 
             preparedStatement.setLong(1, id);

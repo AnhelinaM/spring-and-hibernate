@@ -1,6 +1,5 @@
 package by.anhelinam.sql.service.impl;
 
-import by.anhelinam.sql.config.ApplicationConfig;
 import by.anhelinam.sql.dao.StudentDao;
 import by.anhelinam.sql.entity.Student;
 import by.anhelinam.sql.exception.ConnectionPoolException;
@@ -11,13 +10,11 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Set;
 
-public enum StudentServiceImpl implements StudentService {
-    INSTANCE;
-
+public class StudentServiceImpl implements StudentService {
     private final StudentDao studentDao;
 
-    StudentServiceImpl() {
-        this.studentDao = ApplicationConfig.getStudentDao();
+    public StudentServiceImpl(StudentDao studentDao) {
+        this.studentDao = studentDao;
     }
 
     @Override

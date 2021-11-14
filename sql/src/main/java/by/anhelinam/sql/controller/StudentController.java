@@ -11,20 +11,19 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-public enum StudentController {
-    INSTANCE;
-
+public class StudentController {
     private final StudentService studentService;
+    private final ConnectionPool connectionPool;
 
-    StudentController() {
-        this.studentService = ApplicationConfig.getStudentService();
+    public StudentController(StudentService studentService, ConnectionPool connectionPool) {
+        this.studentService = studentService;
+        this.connectionPool = connectionPool;
     }
 
     public static void main(String[] args) throws RequestException, ValidationException, ConnectionPoolException, SQLException, InterruptedException {
         ApplicationConfig.run();
     }
 
-//    public можно??
     public void run() throws RequestException, ValidationException, SQLException, InterruptedException, ConnectionPoolException {
         Scanner scanner = new Scanner(System.in);
         while (true) {
@@ -55,7 +54,7 @@ public enum StudentController {
                     studentService.delete(id);
                     break;
                 case "exit":
-                    ApplicationConfig.getConnectionPool().closePool();
+                    connectionPool.closePool();
                     return;
                 default:
                     throw new RequestException("There is no such request");
