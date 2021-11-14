@@ -18,9 +18,11 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public abstract class ApplicationConfig {
+    private static final String APP_PROPERTIES = "application.properties";
     private static final String DB_PROPERTIES = "db.properties";
     private static final String DB_PROPERTY_URL_KEY = "url";
     private static final Properties dbProperties = new Properties();
+    private static final Properties appProperties = new Properties();
     private static String dbURL;
 
     public static void initializeProperties() throws ConnectionPoolException {
@@ -45,39 +47,30 @@ public abstract class ApplicationConfig {
         return dbURL;
     }
 
-    public static StudentService getStudentService() {
-        return StudentServiceImpl.INSTANCE;
-    }
-
-    public static StudentDao getStudentDao() {
-        return StudentDaoImpl.INSTANCE;
-    }
-
-    public static StudentController getStudentController() {
-        return StudentController.INSTANCE;
-    }
-
-    public static ConnectionPool getConnectionPool() {
-        // надо что-то с этим сделать
+    public static void run() throws ConnectionPoolException, ValidationException, SQLException, RequestException, InterruptedException {
+        initializeProperties();
         ConnectionPool connectionPool;
-        if (CustomCP.INSTANCE.getClass().getSimpleName() == dbProperties.getProperty("dependencies.connection-pool")) {
+
+        InputStream propertiesInputStream = ApplicationConfig.class.getClassLoader().getResourceAsStream(APP_PROPERTIES);
+        if (propertiesInputStream != null) {
+            try {
+                appProperties.load(propertiesInputStream);
+            } catch (IOException e) {
+                throw new ConnectionPoolException("Failed to load application properties");
+            }
+        } else {
+            throw new ConnectionPoolException("Failed to read application properties file");
+        }
+
+        if (CustomCP.INSTANCE.getClass().getSimpleName() == appProperties.getProperty("dependencies.connection-pool")) {
             connectionPool = CustomCP.INSTANCE;
         } else {
 //        if (HikariCP.INSTANCE.getClass().getSimpleName() == dbProperties.getProperty("dependencies.connection-pool")){
             connectionPool = HikariCP.INSTANCE;
         }
-        return connectionPool;
-    }
-
-    public static void run() throws ConnectionPoolException, ValidationException, SQLException, RequestException, InterruptedException {
-        initializeProperties();
-//        понятия не имею, про какие ты объекты
-//        а ещё я не создавала новые пропертис
-//        "за создание всех служебных объектов отвечает ApplicationConfig" аааа, потом ответит, я не понимаю, как это
-//        про интерфейс у меня тоже вопросы (1-2 пункт)
-//        "Проверить, что везде используются интерфейсы" ну я заменила всё это случайно на гет из аппликейшенконфига
-//        "можно переписать ApplicationConfig" да, нужно, но сначала вопрос про служебные объекты
-        getStudentController().run();
-//        итог я поняла, если эта штука заработает, то даже получилось
+        StudentDao studentDao = new StudentDaoImpl(connectionPool);
+        StudentService studentService = new StudentServiceImpl(studentDao);
+        StudentController studentController = new StudentController(studentService, connectionPool);
+        studentController.run();
     }
 }
