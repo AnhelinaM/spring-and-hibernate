@@ -2,6 +2,7 @@ package by.anhelinam.sql.config;
 
 import by.anhelinam.sql.controller.StudentController;
 import by.anhelinam.sql.dao.StudentDao;
+import by.anhelinam.sql.dao.impl.HibernateStudentDao;
 import by.anhelinam.sql.dao.impl.StudentDaoImpl;
 import by.anhelinam.sql.exception.ConnectionPoolException;
 import by.anhelinam.sql.exception.RequestException;
@@ -11,6 +12,8 @@ import by.anhelinam.sql.pool.impl.CustomCP;
 import by.anhelinam.sql.pool.impl.HikariCP;
 import by.anhelinam.sql.service.StudentService;
 import by.anhelinam.sql.service.impl.StudentServiceImpl;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,7 +71,12 @@ public abstract class ApplicationConfig {
 //        if (HikariCP.INSTANCE.getClass().getSimpleName() == dbProperties.getProperty("dependencies.connection-pool")){
             connectionPool = HikariCP.INSTANCE;
         }
-        StudentDao studentDao = new StudentDaoImpl(connectionPool);
+        // SessionFactory in Hibernate 5 example
+        Configuration config = new Configuration();
+        config.configure();
+        // local SessionFactory bean created
+        SessionFactory sessionFactory = config.buildSessionFactory();
+        StudentDao studentDao = new HibernateStudentDao(sessionFactory);
         StudentService studentService = new StudentServiceImpl(studentDao);
         StudentController studentController = new StudentController(studentService, connectionPool);
         studentController.run();

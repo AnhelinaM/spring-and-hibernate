@@ -1,46 +1,46 @@
 -- 1
 create table student
 (
-	id 			bigserial primary key,
-	name 		varchar(30) not null,
+	id 		bigserial 	primary key,
+	name 		varchar(30) 	not null,
 	birthday 	timestamp 	not null,
 	grade 		int 		not null
 );
 
 create table subject
 (
-	id 			bigserial primary key,
-	name 		varchar(30) not null,
-	description varchar(300),
+	id 		bigserial 	primary key,
+	name 		varchar(30) 	not null,
+	description 	varchar(300),
 	grade 		int 		not null
 );
 
 create table payment_type
 (
-	id 			bigserial primary key,
-	name 		varchar(30) not null
+	id 		bigserial 	primary key,
+	name 		varchar(30)	not null
 );
 
 create table payment
 (
-	id 			bigserial primary key,
+	id 		bigserial 	primary key,
 	type_id		bigint		not null references payment_type (id),
-	amount		decimal 	not null,
+	amount		decimal 		not null,
 	student_id	bigint		not null references student (id),
 	date 		timestamp 	not null
 );
 
 create table mark
 (
-	id 			bigserial primary key,
-	student_id	bigint	not null references student (id),
-	subject_id	bigint	not null references subject (id),
-	mark 		int 	not null
+	id 		bigserial 	primary key,
+	student_id	bigint		not null references student (id),
+	subject_id	bigint		not null references subject (id),
+	mark 		int 		not null
 );
 
 -- 2
 insert into student (name, birthday, grade)
-values 	('John', '1999-05-04', 1),
+values 		('John', '1999-05-04', 1),
 		('Chris', '1999-12-11', 1),
 		('Carl', '2000-05-15', 1),
 		('Oliver', '1998-10-23', 2),
@@ -56,7 +56,7 @@ values 	('John', '1999-05-04', 1),
 		('Molly', '1999-09-28', 5);
 		
 insert into subject (name, description, grade)
-values	('art', 'aaaa', 1),
+values		('art', 'aaaa', 1),
 		('music', null, 1),
 		('geography', null, 2),
 		('history', 'bbbbb', 2),
@@ -68,10 +68,10 @@ values	('art', 'aaaa', 1),
 		('chemistry', null, 5);
 
 insert into payment_type (name)
-values	('daily'), ('weekly'), ('monthly');
+values		('daily'), ('weekly'), ('monthly');
 
 insert into payment (type_id, amount, student_id, date)
-values	(2, 61.5, 1, '2021-09-29'),
+values		(2, 61.5, 1, '2021-09-29'),
 		(3, 132.2, 4, '2021-08-21'),
 		(2, 56.5, 7, '2021-09-22'),
 		(1, 6.9, 5, '2021-09-29'),
@@ -79,7 +79,7 @@ values	(2, 61.5, 1, '2021-09-29'),
 		(3, 127.8, 8, '2021-08-05');
 		
 insert into mark (student_id, subject_id, mark)
-values	(2, 1, 8), 
+values		(2, 1, 8), 
 		(4, 4, 5),
 		(5, 3, 9),
 		(8, 6, 4),

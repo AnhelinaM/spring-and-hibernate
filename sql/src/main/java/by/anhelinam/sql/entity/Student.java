@@ -1,22 +1,38 @@
 package by.anhelinam.sql.entity;
 
+import org.hibernate.annotations.Proxy;
+
+import javax.persistence.*;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+@Entity
+@Table(name = "student")
+@Proxy(lazy=false)
 public class Student {
-    private long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String name;
-    private Date birthday;
-    private int grade;
-    private Set<Payment> payments = new HashSet<>();
+    private LocalDate birthday;
+    private Integer grade;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "student")
+    private final Set<Payment> payments = new HashSet<>();
 
     public Student() {
     }
 
-    public Student(long id, String name, Date birthday, int grade) {
+    public Student(Long id, String name, LocalDate birthday, Integer grade) {
         this.id = id;
+        this.name = name;
+        this.birthday = birthday;
+        this.grade = grade;
+    }
+
+    public Student(String name, LocalDate birthday, Integer grade) {
         this.name = name;
         this.birthday = birthday;
         this.grade = grade;
@@ -38,11 +54,11 @@ public class Student {
         this.name = name;
     }
 
-    public Date getBirthday() {
+    public LocalDate getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
     }
 
@@ -67,8 +83,8 @@ public class Student {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Student student = (Student) o;
-        return id == student.id &&
-                grade == student.grade &&
+        return Objects.equals(id, student.id) &&
+                Objects.equals(grade, student.grade) &&
                 Objects.equals(name, student.name) &&
                 Objects.equals(birthday, student.birthday);
     }

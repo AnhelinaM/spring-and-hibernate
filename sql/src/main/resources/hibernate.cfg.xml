@@ -1,0 +1,25 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<!DOCTYPE hibernate-configuration SYSTEM
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+
+        <property name = "hibernate.dialect">org.hibernate.dialect.PostgreSQL10Dialect</property>
+        <property name = "hibernate.connection.driver_class">org.postgresql.Driver</property>
+
+        <!-- Assume test is the database name -->
+
+        <property name = "hibernate.connection.url">jdbc:postgresql://localhost:5432/university</property>
+        <property name = "hibernate.connection.username">postgres</property>
+        <property name = "hibernate.connection.password">1111</property>
+        <property name="show_sql">true</property>
+        <property name="hbm2ddl.auto">validate</property>
+        <property name="hibernate.connection.autocommit">true</property>
+
+        <!-- List of XML mapping files -->
+        <mapping class="by.anhelinam.sql.entity.Student"/>
+        <mapping class="by.anhelinam.sql.entity.Payment"/>
+        <mapping class="by.anhelinam.sql.entity.PaymentType"/>
+
+    </session-factory>
+</hibernate-configuration>

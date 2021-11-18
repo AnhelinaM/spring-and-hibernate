@@ -1,16 +1,25 @@
 package by.anhelinam.sql.entity;
 
-import java.sql.Date;
+import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Objects;
 
+@Entity
+@Table(name = "payment")
 public class Payment {
-    private long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @ManyToOne
+    @JoinColumn(name = "type_id")
     private PaymentType paymentType;
-    private double amount;
+    private Double amount;
+    @ManyToOne
+    @JoinColumn(name = "student_id")
     private Student student;
-    private Date date;
+    private LocalDate date;
 
-    public Payment(long id, PaymentType paymentType, double amount, Student student, Date date) {
+    public Payment(long id, PaymentType paymentType, double amount, Student student, LocalDate date) {
         this.id = id;
         this.paymentType = paymentType;
         this.amount = amount;
@@ -53,11 +62,11 @@ public class Payment {
         this.student = student;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
@@ -66,7 +75,7 @@ public class Payment {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Payment payment = (Payment) o;
-        return id == payment.id &&
+        return Objects.equals(id, payment.id) &&
                 Double.compare(payment.amount, amount) == 0 &&
                 Objects.equals(paymentType, payment.paymentType) &&
                 Objects.equals(student, payment.student) &&
