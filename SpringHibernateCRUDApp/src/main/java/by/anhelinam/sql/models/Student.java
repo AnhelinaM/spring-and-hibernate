@@ -1,10 +1,15 @@
-package by.anhelinam.sql.entity;
+package by.anhelinam.sql.models;
 
 import org.hibernate.annotations.Proxy;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import java.sql.Date;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -16,23 +21,28 @@ public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotEmpty(message = "Name should not be empty")
+    @Size(min = 2, max = 30, message = "Name should be between 2 and 30 characters")
     private String name;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
-    private Integer grade;
+    @Min(value = 1, message = "Grade should be greater than 0")
+    @Max(value = 6, message = "Grade should be less than 7")
+    private Long grade;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "student")
-    private final Set<Payment> payments = new HashSet<>();
+    private final Set<by.anhelinam.sql.models.Payment> payments = new HashSet<>();
 
     public Student() {
     }
 
-    public Student(Long id, String name, LocalDate birthday, Integer grade) {
+    public Student(Long id, String name, LocalDate birthday, Long grade) {
         this.id = id;
         this.name = name;
         this.birthday = birthday;
         this.grade = grade;
     }
 
-    public Student(String name, LocalDate birthday, Integer grade) {
+    public Student(String name, LocalDate birthday, Long grade) {
         this.name = name;
         this.birthday = birthday;
         this.grade = grade;
@@ -61,20 +71,27 @@ public class Student {
     public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
     }
+    public void setBirthday(String birthday) {
+        this.birthday = LocalDate.parse(birthday, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }
 
-    public int getGrade() {
+    public Long getGrade() {
         return grade;
     }
 
-    public void setGrade(int grade) {
+    public void setGrade(Long grade) {
         this.grade = grade;
     }
 
-    public Set<Payment> getPayments() {
-        return payments;
+    public String getPayments() {
+//        String result = '';
+//        for (p: payments){
+//            result += p.g''
+//        }
+        return payments.toString();
     }
 
-    public void setPayment(Payment payment) {
+    public void setPayment(by.anhelinam.sql.models.Payment payment) {
         this.payments.add(payment);
     }
 

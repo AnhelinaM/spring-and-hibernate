@@ -1,6 +1,8 @@
-package by.anhelinam.sql.entity;
+package by.anhelinam.sql.models;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -11,11 +13,14 @@ public class PaymentType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotEmpty(message = "Name should not be empty")
+    @Size(min = 2, max = 30, message = "Name should be between 2 and 30 characters")
     private String name;
+    private String description;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "paymentType")
-    private Set<Payment> payments = new HashSet<>();
+    private Set<by.anhelinam.sql.models.Payment> payments = new HashSet<>();
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -29,6 +34,14 @@ public class PaymentType {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

@@ -8,6 +8,7 @@ import by.anhelinam.sql.exception.ConnectionPoolException;
 import by.anhelinam.sql.pool.ConnectionPool;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,7 +23,7 @@ public class StudentDaoImpl implements StudentDao {
     public Set<Student> getAll() throws SQLException, InterruptedException, ConnectionPoolException {
         Set<Student> studentSet = new HashSet<>();
         String queryString = "select s.id as s_id, p.id as p_id, p.amount, p.date, pt.id as pt_id, pt.name as pt_name, " +
-                "s.name as s_name, s.birthday, grade " +
+                "s.name as s_name, s.birthday, s.grade " +
                 "from student s " +
                 "left join payment p " +
                 "on p.student_id = s.id " +
@@ -40,7 +41,7 @@ public class StudentDaoImpl implements StudentDao {
                 PaymentType paymentType = new PaymentType();
                 payment.setId(resultSet.getLong("p_id"));
                 payment.setAmount(resultSet.getDouble("amount"));
-                payment.setDate(resultSet.getDate("date"));
+                payment.setDate(resultSet.getDate("date").toLocalDate());
                 paymentType.setId(resultSet.getLong("pt_id"));
                 paymentType.setName(resultSet.getString("pt_name"));
                 payment.setStudent(student);
@@ -49,7 +50,7 @@ public class StudentDaoImpl implements StudentDao {
                 if (student.getId() != nextId) {
                     student.setId(nextId);
                     student.setName(resultSet.getString("s_name"));
-                    student.setBirthday(resultSet.getDate("birthday"));
+                    student.setBirthday(resultSet.getDate("birthday").toLocalDate());
                     student.setGrade(resultSet.getInt("grade"));
                     studentSet.add(student);
                 }
@@ -76,7 +77,7 @@ public class StudentDaoImpl implements StudentDao {
                 if (!added) {
                     student.setId(id);
                     student.setName(resultSet.getString("s_name"));
-                    student.setBirthday(resultSet.getDate("birthday"));
+                    student.setBirthday(resultSet.getDate("birthday").toLocalDate());
                     student.setGrade(resultSet.getInt("grade"));
                     added = true;
                 }
@@ -84,7 +85,7 @@ public class StudentDaoImpl implements StudentDao {
                 PaymentType paymentType = new PaymentType();
                 payment.setId(resultSet.getLong("p_id"));
                 payment.setAmount(resultSet.getDouble("amount"));
-                payment.setDate(resultSet.getDate("date"));
+                payment.setDate(resultSet.getDate("date").toLocalDate());
                 paymentType.setId(resultSet.getLong("pt_id"));
                 paymentType.setName(resultSet.getString("pt_name"));
                 payment.setStudent(student);

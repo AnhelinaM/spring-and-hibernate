@@ -1,6 +1,9 @@
-package by.anhelinam.sql.entity;
+package by.anhelinam.sql.models;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -13,13 +16,15 @@ public class Payment {
     @ManyToOne
     @JoinColumn(name = "type_id")
     private PaymentType paymentType;
+    @Min(value = 0, message = "Amount should be greater than 0")
     private Double amount;
     @ManyToOne
     @JoinColumn(name = "student_id")
     private Student student;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 
-    public Payment(long id, PaymentType paymentType, double amount, Student student, LocalDate date) {
+    public Payment(Long id, PaymentType paymentType, Double amount, Student student, LocalDate date) {
         this.id = id;
         this.paymentType = paymentType;
         this.amount = amount;
@@ -90,9 +95,10 @@ public class Payment {
     @Override
     public String toString() {
         return "Payment{" +
-                "paymentType=" + paymentType +
+                "paymentType=" + paymentType.getName() +
                 ", amount=" + amount +
                 ", date=" + date +
+                ", student=" + student.getName() +
                 '}';
     }
 }
