@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Show</title>
+</head>
+<body>
+<p th:text="${paymentType.getName()}">VALUE</p>
+<p th:text="${'Description: ' + paymentType.getDescription()}">VALUE</p>
+
+<a th:href="@{/types/{id}/edit(id=${paymentType.getId()})}">Edit</a>
+
+<form th:method="DELETE" th:action="@{/types/{id}(id=${paymentType.getId()})}">
+    <input type="submit" value="Delete"/>
+</form>
+
+<br/>
+<a th:href="@{/types}">Back</a>
+<br/>
+</body>
+</html>

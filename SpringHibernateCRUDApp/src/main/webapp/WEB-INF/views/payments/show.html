@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Show</title>
+</head>
+<body>
+<p th:text="${'Amount: ' + payment.getAmount()}">VALUE</p>
+<p th:text="${'Date: ' + payment.getDate()}">VALUE</p>
+<p th:text="${'Payment type: ' + payment.getPaymentType().getName()}">VALUE</p>
+<p th:text="${'Student name: ' + payment.getStudent().getName()}">VALUE</p>
+
+<a th:href="@{/payments/{id}/edit(id=${payment.getId()})}">Edit</a>
+
+<form th:method="DELETE" th:action="@{/payments/{id}(id=${payment.getId()})}">
+    <input type="submit" value="Delete"/>
+</form>
+<br/>
+<a th:href="@{/payments}">Back</a>
+<br/>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Update payment</title>
+</head>
+<body>
+
+<form th:method="PATCH" th:action="@{/payments/{id}(id=${payment.getId()})}" th:object="${payment}">
+    <label for="amount">Enter amount: </label>
+    <input type="text" th:field="*{amount}" id="amount"/>
+    <div style="color:red" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}">Amount Error</div>
+    <br/>
+    <label for="date">Enter date: </label>
+    <input type="date" th:field="*{date}" id="date"/>
+    <div style="color:red" th:if="${#fields.hasErrors('date')}" th:errors="*{date}">Date Error</div>
+    <br/>
+
+    <label for="paymentType">Choose a payment type:</label>
+    <select th:field="*{paymentTypeId}" id="paymentType">
+<!--        <option value="">Select a payment type</option>-->
+        <option th:each="paymentType : ${types}"
+                th:value="${paymentType.getId()}"
+                th:text="${paymentType.getName()}"></option>
+    </select>
+    <br/>
+
+    <label for="student">Choose a student:</label>
+    <select th:field="*{studentId}" id="student">
+<!--        <option value="">Select a student</option>-->
+        <option th:each="student : ${students}"
+                th:value="${student.getId()}"
+                th:text="${student.getName()}"></option>
+    </select>
+    <br/>
+
+    <input type="submit" value="Update"/>
+</form>
+
+</body>
+</html>
