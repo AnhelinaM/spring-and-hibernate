@@ -1,0 +1,104 @@
+-- Создать триггеры.
+-- Триггер должен отслеживать, чтобы нарушитель не получил более одного наказания за одно нарушение;
+create or replace function check_punishment()
+returns trigger as
+$$
+declare
+  select_punishment_id  integer;
+begin
+ select_punishment_id = (select punishment_id from violators
+  where (fact_of_violation_id = new.fact_of_violation_id
+  and employee_id = new.employee_id 
+     and status_id = (select s.id from status s where s.name = 'назначено')));
+ if select_punishment_id is not null 
+  and select_punishment_id != new.punishment_id then 
+--   значит, наказание уже есть, оно не аннулировано и оно другое 
+--   (предполагается, что можно аннулировать старое и назначить новое наказание)
+   raise exception 'Наказание уже назначено!';
+ end if;
+ return new;
+end;
+$$ language plpgsql;
+
+create trigger check_punishment_trigger before insert or update on violators
+for each row 
+execute procedure check_punishment();
+
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+select * from violators
+order by fact_of_violation_id;
+
+delete from violators
+where fact_of_violation_id = 1 and employee_id = 5 and punishment_id = 2;
+
+insert into violators (fact_of_violation_id, employee_id, punishment_id, status_id)
+values  (1, 5, 2, 1);
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+-- Триггер должен отслеживать, чтобы нарушение не аннулировалось более одного раза;
+create or replace function cancel_punishment()
+returns trigger as
+$$
+begin
+ if old.status_id = (select s.id from status s where s.name = 'аннулировано')
+  and new.status_id = (select s.id from status s where s.name = 'аннулировано') then
+  raise exception 'Наказание уже аннулировано!';
+ end if;
+ 
+ return new;
+end;
+$$ language plpgsql;
+
+create trigger cancel_punishment_trigger before update on violators
+for each row 
+execute procedure cancel_punishment();
+
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+select * from violators
+order by fact_of_violation_id;
+
+update violators
+set status_id = (select s.id from status s where s.name = 'назначено')
+where fact_of_violation_id = 1 and employee_id = 5 and punishment_id = 1;
+
+update violators
+set status_id = (select s.id from status s where s.name = 'аннулировано')
+where fact_of_violation_id = 1 and employee_id = 5 and punishment_id = 1;
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+-- Триггер должен отслеживать, чтобы за одно нарушение, если участников несколько, все получили одинаковые наказания.
+create or replace function same_punishment()
+returns trigger as
+$$
+begin
+ if new.punishment_id not in (select punishment_id from violators
+      where fact_of_violation_id = new.fact_of_violation_id) then
+    raise exception 'Наказание отличается от остальных!';
+ end if;
+ 
+ return new;
+end;
+$$ language plpgsql;
+
+create trigger same_punishment_trigger before insert or update on violators
+for each row 
+execute procedure same_punishment();
+
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+select * from violators
+order by fact_of_violation_id;
+
+-- update violators
+-- set status_id = 2, punishment_id = 1
+-- where fact_of_violation_id = 1
+
+-- update violators
+-- set status_id = 2
+-- where fact_of_violation_id = 1
+
+delete from violators
+where fact_of_violation_id = 1 and employee_id = 9 and punishment_id = 1;
+
+insert into violators
+values (1, 9, 2, 1);
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
